@@ -175,6 +175,10 @@ var Button = d3.select("#filter-btn");
         var CitySelect = NewDropDown(Unique(Cities),'Filter Results by City','select-city','- City')
         var ShapeSelect = NewDropDown(Unique(Shapes),'Filter Results by Shape','select-shape','- Shape')
         
+        // --------- BONUS NOTES -------------
+        // Use of State and Country filters with city and shape filters produced far too few results.  You had to be too precise with the entry.  
+        // Therefore I option to use the date to show a table and filter by city and shape.  
+
         // var StateSelect = NewDropDown(Unique(States),'Select a State','select-state')
         // var CountrySelect = NewDropDown(Unique(Countries),'Select a Country','select-country')
         
@@ -219,7 +223,7 @@ var Button = d3.select("#filter-btn");
             var filtered = data.filter(ufo => TitleCase(ufo.city) === City);
             PopTable(filtered)
 
-            Button.text("Reset Table")
+            Button.text("Reset to Date")
 
             return filtered
         } // End FilterCity
@@ -248,6 +252,10 @@ var Button = d3.select("#filter-btn");
 
         }) // End Button Click
 
+        Form_Date.on("blur",function(){
+            FilterDate(sightings)
+        })
+
         Get('select-city').addEventListener("change", function(){
        
             DateFiltered = FilterDate(sightings)
@@ -262,16 +270,14 @@ var Button = d3.select("#filter-btn");
         }); // End City Select
 
         Get('select-shape').addEventListener("change", function(){
-            City = GetSelectedText('select-city')
-            if (City == '--- Select a City ----') {
-                FilterDate(sightings)
-            }
-            
+            Shape = GetSelectedText('select-shape')
+           
             DateFiltered = FilterDate(sightings)
-            filtered = FilterCity(DateFiltered)
+            CityFiltered = FilterCity(DateFiltered)
+            filtered = FilterShape(CityFiltered)
 
             LabelThis(`
-            We found ${filtered.length} result(s) that match ${GetSelectedText('datetime')} and ${GetSelectedText('select-city')}.
+            We found ${filtered.length} result(s) that match ${GetSelectedText('datetime')} and ${GetSelectedText('select-city')} and ${Shape}.
             `)
             
             return filtered
